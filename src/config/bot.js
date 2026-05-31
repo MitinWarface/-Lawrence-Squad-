@@ -359,7 +359,7 @@ export const botConfig = {
     // Welcome template posted when a user joins.
     // Placeholders: {user}, {server}, {memberCount}
     defaultWelcomeMessage:
-      "Привет {user} в нашу семью {server}! Нас уже {memberCount} в клане!",
+      "Добро пожаловать {user} в нашу семью {server}! Нас уже {memberCount} в клане!",
     // Goodbye template posted when a user leaves.
     // Placeholders: {user}, {memberCount}
     defaultGoodbyeMessage:
