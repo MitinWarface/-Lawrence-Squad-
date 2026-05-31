@@ -25,9 +25,9 @@ export const botConfig = {
     activities: [
       {
         // Text users will see (example: "Playing /help | Titan Bot").
-        name: "Made with ❤️",
+        name: "[Lawrence Squad] ❤️",
         // Activity type number (0 = Playing).
-        type: 0, 
+        type: 2, 
       },
     ],
   },
@@ -56,9 +56,9 @@ export const botConfig = {
   applications: {
     // Default questions shown when someone fills out an application.
     defaultQuestions: [
-      { question: "What is your name?", required: true },
-      { question: "How old are you?", required: true },
-      { question: "Why do you want to join?", required: true },
+      { question: "Как тебя зовут?", required: true },
+      { question: "Сколько тебе лет?", required: true },
+      { question: "Почему ты решил вступить к нам?", required: true },
     ],
 
     // Embed colors by application status.
@@ -289,10 +289,10 @@ export const botConfig = {
   // =========================
   verification: {
     // Message shown when posting the verification panel.
-    defaultMessage: "Click the button below to verify yourself and gain access to the server!",
+    defaultMessage: "Нажмите на кнопку ниже, чтобы авторизоваться и получить доступ к серверу!",
 
     // Text on the verification button.
-    defaultButtonText: "Verify",
+    defaultButtonText: "Верификация",
 
     // Automatic verification behavior.
     autoVerify: {
@@ -319,9 +319,9 @@ export const botConfig = {
 
       // Human-readable descriptions for each criteria mode.
       criteria: {
-        account_age: "Account must be older than specified days",
-        server_size: "All users if server has less than 1000 members",
-        none: "All users immediately"
+        account_age: "Учетная запись должна быть старше указанных дней",
+        server_size: "Все пользователи, если на сервере менее 1000 участников",
+        none: "Все пользователи медленные"
       }
     },
 
@@ -359,11 +359,11 @@ export const botConfig = {
     // Welcome template posted when a user joins.
     // Placeholders: {user}, {server}, {memberCount}
     defaultWelcomeMessage:
-      "Welcome {user} to {server}! We now have {memberCount} members!",
+      "Привет {user} в нашу семью {server}! Нас уже {memberCount} в клане!",
     // Goodbye template posted when a user leaves.
     // Placeholders: {user}, {memberCount}
     defaultGoodbyeMessage:
-      "{user} has left the server. We now have {memberCount} members.",
+      "{user} покинул нашу семью. Теперь нас {memberCount} в клане.",
     // Channel ID for welcome messages.
     defaultWelcomeChannel: null,
     // Channel ID for goodbye messages.
@@ -376,8 +376,8 @@ export const botConfig = {
   counters: {
     defaults: {
       // Default naming/description templates for counter entries.
-      name: "{name} Counter",
-      description: "Server {name} counter",
+      name: "{name} Счетчик",
+      description: "Сервер {name} Счетчик",
       // Channel type used for counters (typically "voice").
       type: "voice",
       // Channel name format. `{count}` is replaced automatically.
@@ -391,26 +391,26 @@ export const botConfig = {
     },
     messages: {
       // Default response messages for counter actions.
-      created: "✅ Created counter **{name}**",
-      deleted: "🗑️ Deleted counter **{name}**",
-      updated: "🔄 Updated counter **{name}**",
+      created: "✅ Создан counter **{name}**",
+      deleted: "🗑️ Удален counter **{name}**",
+      updated: "🔄 Обновлен counter **{name}**",
     },
     types: {
       // Built-in counter types and how each count is calculated.
       members: {
         name: "👥 Members",
-        description: "Total members in the server",
+        description: "Общее количество участников на сервере",
         getCount: (guild) => guild.memberCount.toString(),
       },
       bots: {
         name: "🤖 Bots",
-        description: "Total bot accounts in the server",
+        description: "Общее количество ботов на сервере",
         getCount: (guild) =>
           guild.members.cache.filter((m) => m.user.bot).size.toString(),
       },
       members_only: {
         name: "👤 Humans",
-        description: "Total human members (non-bots)",
+        description: "[Lawrence Squad]",
         getCount: (guild) =>
           guild.members.cache.filter((m) => !m.user.bot).size.toString(),
       },
@@ -421,13 +421,13 @@ export const botConfig = {
   // GENERIC BOT MESSAGES
   // =========================
   messages: {
-    noPermission: "You do not have permission to use this command.",
-    cooldownActive: "Please wait {time} before using this command again.",
-    errorOccurred: "An error occurred while executing this command.",
+    noPermission: "У вас нет разрешения на использование этой команды.",
+    cooldownActive: "Пожалуйста, подождите {time}, прежде чем снова использовать эту команду.",
+    errorOccurred: "При выполнении этой команды произошла ошибка.",
     missingPermissions:
-      "I am missing required permissions to perform this action.",
-    commandDisabled: "This command has been disabled.",
-    maintenanceMode: "The bot is currently in maintenance mode.",
+      "У меня отсутствуют необходимые разрешения для выполнения этого действия.",
+    commandDisabled: "Эта команда была отключена.",
+    maintenanceMode: "В данный момент бот находится в режиме технического обслуживания.",
   },
 
   // =========================
