@@ -5,12 +5,12 @@ export function getConfirmationButtons(customIdPrefix = 'confirm') {
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId(`${customIdPrefix}_yes`)
-            .setLabel('Confirm')
+            .setLabel('Подтвердить')
             .setStyle(ButtonStyle.Success)
             .setEmoji('✅'),
         new ButtonBuilder()
             .setCustomId(`${customIdPrefix}_no`)
-            .setLabel('Cancel')
+            .setLabel('Отменить')
             .setStyle(ButtonStyle.Danger)
             .setEmoji('❌')
     );
@@ -60,10 +60,10 @@ export function createSelectMenu(customId, placeholder, options = [], min = 1, m
 export function createButton(customId, label, style = 'primary', emoji = null, disabled = false) {
     
     if (!customId || typeof customId !== 'string' || customId.length === 0) {
-        throw new Error('customId must be a non-empty string');
+        throw new Error('Идентификатор пользователя должен быть непустой строкой');
     }
     if (!label || typeof label !== 'string' || label.length === 0) {
-        throw new Error('label must be a non-empty string');
+        throw new Error('метка должна быть непустой строкой');
     }
     
     
@@ -94,10 +94,10 @@ export function createButton(customId, label, style = 'primary', emoji = null, d
 export function createLinkButton(label, url, emoji = null) {
     
     if (!label || typeof label !== 'string') {
-        throw new Error('label must be a non-empty string');
+        throw new Error('метка должна быть непустой строкой');
     }
     if (!url || typeof url !== 'string') {
-        throw new Error('url must be a non-empty string');
+        throw new Error('url-адрес должен быть непустой строкой');
     }
     
     const validLabel = label.substring(0, 80);
