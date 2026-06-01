@@ -33,7 +33,7 @@ export default {
 
         if (interaction.isChatInputCommand()) {
           try {
-            logger.info(`Command executed: /${interaction.commandName} by ${interaction.user.tag}`, {
+            logger.info(`Команда выполнена: /${interaction.commandName} пользователем ${interaction.user.tag}`, {
               event: 'interaction.command.received',
               traceId: interactionTraceContext.traceId,
               guildId: interaction.guildId,
@@ -50,9 +50,9 @@ export default {
 
             if (!command) {
               throw createError(
-                `No command matching ${interaction.commandName} was found.`,
+                `Команда, соответствующая ${interaction.commandName}, не найдена.`,
                 ErrorTypes.CONFIGURATION,
-                'Sorry, that command does not exist.',
+                'Извините, такой команды не существует.',
                 withTraceContext({ commandName: interaction.commandName }, interactionTraceContext)
               );
             }
@@ -61,9 +61,9 @@ export default {
             if (!abuseProtection.allowed) {
               const formattedCooldown = formatCooldownDuration(abuseProtection.remainingMs);
               throw createError(
-                `Risky command cooldown active for ${interaction.commandName}`,
+                `Активна задержка для команды ${interaction.commandName}`,
                 ErrorTypes.RATE_LIMIT,
-                `This command is on cooldown. Please wait ${formattedCooldown} before trying again.`,
+                `Эта команда находится на перезарядке. Пожалуйста, подождите ${formattedCooldown} перед следующей попыткой.`,
                 withTraceContext({
                   commandName: interaction.commandName,
                   subtype: 'command_cooldown',
@@ -80,9 +80,9 @@ export default {
               guildConfig = await getGuildConfig(client, interaction.guild.id, interactionTraceContext);
               if (guildConfig?.disabledCommands?.[interaction.commandName]) {
                 throw createError(
-                  `Command ${interaction.commandName} is disabled in this guild`,
+                  `Команда ${interaction.commandName} отключена на этом сервере`,
                   ErrorTypes.CONFIGURATION,
-                  'This command has been disabled for this server.',
+                  'Эта команда была отключена для данного сервера.',
                   withTraceContext({ commandName: interaction.commandName, guildId: interaction.guild.id }, interactionTraceContext)
                 );
               }
@@ -96,7 +96,7 @@ export default {
             }, interactionTraceContext));
           }
         } else if (interaction.isAutocomplete()) {
-          // Handle autocomplete interactions
+          // Обработка событий автозаполнения
           const focusedOption = interaction.options.getFocused(true);
           
           if (interaction.commandName === 'apply' && focusedOption.name === 'application') {
@@ -105,7 +105,7 @@ export default {
               const roles = await getApplicationRoles(client, interaction.guildId);
               const roleName = interaction.options.getString('application', false);
               
-              // Filter: only show enabled applications
+              // Фильтр: показывать только включенные заявки
               const filtered = roles.filter(role =>
                 role.enabled !== false && 
                 role.name.toLowerCase().startsWith(roleName?.toLowerCase() || '')
@@ -113,12 +113,12 @@ export default {
               
               await interaction.respond(
                 filtered.slice(0, 25).map(role => ({
-                  name: `${role.name}${role.enabled === false ? ' (disabled)' : ''}`,
+                  name: `${role.name}${role.enabled === false ? ' (отключено)' : ''}`,
                   value: role.name
                 }))
               );
             } catch (error) {
-              logger.error('Error handling autocomplete:', {
+              logger.error('Ошибка при обработке автозаполнения:', {
                 error: error.message,
                 guildId: interaction.guildId,
                 commandName: interaction.commandName
@@ -131,19 +131,19 @@ export default {
               const roles = await getApplicationRoles(client, interaction.guildId);
               const appName = interaction.options.getString('application', false);
               
-              // Show all applications (enabled and disabled), but mark disabled ones
+              // Показываем все заявки (и включенные, и отключенные), но помечаем отключенные
               const filtered = roles.filter(role =>
                 role.name.toLowerCase().startsWith(appName?.toLowerCase() || '')
               );
               
               await interaction.respond(
                 filtered.slice(0, 25).map(role => ({
-                  name: `${role.name}${role.enabled === false ? ' (disabled)' : ''}`,
+                  name: `${role.name}${role.enabled === false ? ' (отключено)' : ''}`,
                   value: role.name
                 }))
               );
             } catch (error) {
-              logger.error('Error handling app-admin autocomplete:', {
+              logger.error('Ошибка при обработке автозаполнения app-admin:', {
                 error: error.message,
                 guildId: interaction.guildId,
                 commandName: interaction.commandName
@@ -163,7 +163,7 @@ export default {
                 return;
               }
               
-              // Filter out panels whose messages no longer exist
+              // Отфильтровываем панели, сообщения которых больше не существуют
               const validPanels = [];
               for (const panel of panels) {
                 if (!panel.messageId || !panel.channelId) {
@@ -198,8 +198,8 @@ export default {
                     const msg = await channel.messages.fetch(panel.messageId).catch(() => null);
                     if (!msg) return null;
                     
-                    const title = msg?.embeds?.[0]?.title ?? 'Untitled Panel';
-                    const channelName = channel?.name ?? 'unknown';
+                    const title = msg?.embeds?.[0]?.title ?? 'Панель без названия';
+                    const channelName = channel?.name ?? 'неизвестно';
                     
                     return {
                       name: `${title} (${channelName})`.substring(0, 100),
@@ -214,7 +214,7 @@ export default {
               const validChoices = choices.filter(c => c !== null);
               await interaction.respond(validChoices);
             } catch (error) {
-              logger.error('Error handling reactroles autocomplete:', {
+              logger.error('Ошибка при обработке автозаполнения reactroles:', {
                 error: error.message,
                 guildId: interaction.guildId,
                 commandName: interaction.commandName
@@ -241,9 +241,9 @@ export default {
               }
             } else {
               throw createError(
-                `No button handler found for ${buttonType}`,
+                `Обработчик кнопки не найден для ${buttonType}`,
                 ErrorTypes.CONFIGURATION,
-                'This button is not available.',
+                'Эта кнопка недоступна.',
                 withTraceContext({ buttonType }, interactionTraceContext)
               );
             }
@@ -259,9 +259,9 @@ export default {
             }
 
             throw createError(
-              `No button handler found for ${customId}`,
+              `Обработчик кнопки не найден для ${customId}`,
               ErrorTypes.CONFIGURATION,
-              'This button is not available.',
+              'Эта кнопка недоступна.',
               withTraceContext({ customId }, interactionTraceContext)
             );
           }
@@ -281,16 +281,16 @@ export default {
 
           if (!selectMenu) {
             if (!interaction.customId.includes(':')) {
-              // No registered handler and no ':' delimiter — this is an inline-collected
-              // select menu (e.g. ticket_config_<guildId>, jointocreate_config_<id>).
-              // Return silently so the existing MessageComponentCollector handles it.
+              // Нет зарегистрированного обработчика и нет разделителя ':' — это встроенное собираемое
+              // выпадающее меню (например, ticket_config_<guildId>, jointocreate_config_<id>).
+              // Возвращаем молча, чтобы существующий MessageComponentCollector обработал его.
               return;
             }
 
             throw createError(
-              `No select menu handler found for ${customId}`,
+              `Обработчик выпадающего меню не найден для ${customId}`,
               ErrorTypes.CONFIGURATION,
-              'This select menu is not available.',
+              'Это выпадающее меню недоступно.',
               withTraceContext({ customId }, interactionTraceContext)
             );
           }
@@ -331,7 +331,7 @@ export default {
           }
 
           if (interaction.customId.startsWith('jtc_')) {
-            logger.debug(`Skipping modal handler lookup for inline-awaited modal: ${interaction.customId}`, {
+            logger.debug(`Пропуск поиска обработчика для ожидаемого встроенного модального окна: ${interaction.customId}`, {
               event: 'interaction.modal.inline_skipped',
               traceId: interactionTraceContext.traceId
             });
@@ -343,15 +343,15 @@ export default {
 
           if (!modal) {
             if (!interaction.customId.includes(':')) {
-              // No registered handler and no ':' delimiter — this is an inline-awaited
-              // modal (e.g. via awaitModalSubmit). Return silently so the caller handles it.
+              // Нет зарегистрированного обработчика и нет разделителя ':' — это встроенное ожидаемое
+              // модальное окно (например, через awaitModalSubmit). Возвращаем молча, чтобы вызывающая функция обработала его.
               return;
             }
 
             throw createError(
-              `No modal handler found for ${customId}`,
+              `Обработчик модального окна не найден для ${customId}`,
               ErrorTypes.CONFIGURATION,
-              'This form is not available.',
+              'Эта форма недоступна.',
               withTraceContext({ customId }, interactionTraceContext)
             );
           }
@@ -367,7 +367,7 @@ export default {
           }
         }
       } catch (error) {
-        logger.error('Unhandled error in interactionCreate:', {
+        logger.error('Необработанная ошибка в interactionCreate:', {
           event: 'interaction.unhandled_error',
           errorCode: 'INTERACTION_UNHANDLED_ERROR',
           error,
@@ -379,11 +379,11 @@ export default {
 
         try {
           const ephemeralErrorMessage = {
-            embeds: [MessageTemplates.ERRORS.DATABASE_ERROR('processing your interaction')],
+            embeds: [MessageTemplates.ERRORS.DATABASE_ERROR('обработке вашего взаимодействия')],
             flags: MessageFlags.Ephemeral
           };
           const editErrorMessage = {
-            embeds: [MessageTemplates.ERRORS.DATABASE_ERROR('processing your interaction')]
+            embeds: [MessageTemplates.ERRORS.DATABASE_ERROR('обработке вашего взаимодействия')]
           };
 
           if (interaction.deferred) {
@@ -394,7 +394,7 @@ export default {
             await interaction.reply(ephemeralErrorMessage);
           }
         } catch (replyError) {
-          logger.error('Failed to send fallback error response:', {
+          logger.error('Не удалось отправить резервное сообщение об ошибке:', {
             event: 'interaction.error_response_failed',
             errorCode: 'INTERACTION_ERROR_RESPONSE_FAILED',
             error: replyError,
