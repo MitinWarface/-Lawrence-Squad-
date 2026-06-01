@@ -19,12 +19,12 @@ export default {
 
       if (usernameChanged) {
         fields.push({
-          name: '🏷️ Old Username',
+          name: '🏷️ Старое имя пользователя',
           value: oldUser.username,
           inline: true
         });
         fields.push({
-          name: '🏷️ New Username',
+          name: '🏷️ Новое имя пользователя',
           value: newUser.username,
           inline: true
         });
@@ -32,12 +32,12 @@ export default {
 
       if (discriminatorChanged) {
         fields.push({
-          name: '🔢 Old Tag',
+          name: '🔢 Старый тег',
           value: `#${oldUser.discriminator}`,
           inline: true
         });
         fields.push({
-          name: '🔢 New Tag',
+          name: '🔢 Новый тег',
           value: `#${newUser.discriminator}`,
           inline: true
         });
@@ -52,11 +52,11 @@ export default {
           guildId: guild.id,
           eventType: EVENT_TYPES.MEMBER_NAME_CHANGE,
           data: {
-            description: `${newUser.tag} updated their username`,
+            description: `${newUser.tag} обновил свое имя пользователя`,
             userId: newUser.id,
             fields: [
               {
-                name: '👤 User',
+                name: '👤 Пользователь',
                 value: `${newUser.tag} (${newUser.id})`,
                 inline: true
               },
@@ -66,9 +66,9 @@ export default {
         });
       }
 
-      logger.debug(`Processed userUpdate for ${newUser.id} across ${guilds.length} guild(s)`);
+      logger.debug(`Обработано событие userUpdate для ${newUser.id} на ${guilds.length} сервере(ах)`);
     } catch (error) {
-      logger.error('Error in userUpdate event:', error);
+      logger.error('Ошибка в событии userUpdate:', error);
     }
   }
 };
