@@ -33,19 +33,19 @@ export default {
 
                 const formatData = { user, guild, member };
                 const welcomeMessage = formatWelcomeMessage(
-                    welcomeConfig.welcomeMessage || welcomeConfig.welcomeEmbed?.description || 'Welcome {user} to {server}!',
+                    welcomeConfig.welcomeMessage || welcomeConfig.welcomeEmbed?.description || 'Добро пожаловать, {user}, на сервер {server}!',
                     formatData
                 );
 
                 const messageContent = welcomeConfig.welcomePing ? user.toString() : null;
 
                 const embedTitle = formatWelcomeMessage(
-                    welcomeConfig.welcomeEmbed?.title || '🎉 Welcome!',
+                    welcomeConfig.welcomeEmbed?.title || '🎉 Добро пожаловать!',
                     formatData
                 );
                 const embedFooter = welcomeConfig.welcomeEmbed?.footer
                     ? formatWelcomeMessage(welcomeConfig.welcomeEmbed.footer, formatData)
-                    : `Welcome to ${guild.name}!`;
+                    : `Добро пожаловать на сервер ${guild.name}!`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 
@@ -60,8 +60,8 @@ export default {
                         .setDescription(welcomeMessage)
                         .setThumbnail(user.displayAvatarURL())
                         .addFields(
-                            { name: 'User', value: `${user.tag} (${user.id})`, inline: true },
-                            { name: 'Member Count', value: guild.memberCount.toString(), inline: true }
+                            { name: 'Пользователь', value: `${user.tag} (${user.id})`, inline: true },
+                            { name: 'Участников', value: guild.memberCount.toString(), inline: true }
                         )
                         .setTimestamp()
                         .setFooter({ text: embedFooter });
@@ -113,21 +113,21 @@ export default {
                 guildId: guild.id,
                 eventType: EVENT_TYPES.MEMBER_JOIN,
                 data: {
-                    description: `${user.tag} joined the server`,
+                    description: `${user.tag} присоединился к серверу`,
                     userId: user.id,
                     fields: [
                         {
-                            name: '👤 Member',
+                            name: '👤 Участник',
                             value: `${user.tag} (${user.id})`,
                             inline: true
                         },
                         {
-                            name: '👥 Member Count',
+                            name: '👥 Участников на сервере',
                             value: guild.memberCount.toString(),
                             inline: true
                         },
                         {
-                            name: '📅 Account Created',
+                            name: '📅 Аккаунт создан',
                             value: `<t:${Math.floor(user.createdTimestamp / 1000)}:R>`,
                             inline: true
                         }
@@ -135,7 +135,7 @@ export default {
                 }
             });
         } catch (error) {
-            logger.debug('Error logging member join:', error);
+            logger.debug('Ошибка при записи в лог присоединения участника:', error);
         }
         
         
@@ -147,10 +147,10 @@ export default {
                 }
             }
         } catch (error) {
-            logger.debug('Error updating counters on member join:', error);
+            logger.debug('Ошибка при обновлении счетчиков при присоединении участника:', error);
         }
         
-        // Restore birthday data if the member previously left
+        // Восстановление данных о дне рождения, если участник ранее покидал сервер
         try {
             const backupKey = `guild:${guild.id}:birthdays:left`;
             const backup = (await member.client.db.get(backupKey)) || {};
@@ -159,14 +159,14 @@ export default {
                 await dbSetBirthday(member.client, guild.id, user.id, month, day);
                 delete backup[user.id];
                 await member.client.db.set(backupKey, backup);
-                logger.debug(`Birthday restored for user ${user.id} in guild ${guild.id}`);
+                logger.debug(`День рождения восстановлен для пользователя ${user.id} на сервере ${guild.id}`);
             }
         } catch (error) {
-            logger.debug('Error restoring birthday on member join:', error);
+            logger.debug('Ошибка при восстановлении дня рождения при присоединении участника:', error);
         }
         
     } catch (error) {
-        logger.error('Error in guildMemberAdd event:', error);
+        logger.error('Ошибка в событии guildMemberAdd:', error);
     }
   }
 };
@@ -178,7 +178,7 @@ async function handleVerification(member, guild, verificationConfig, client) {
         const result = await autoVerifyOnJoin(client, guild, member, verificationConfig);
         
         if (result.autoVerified) {
-            logger.info('User auto-verified on join', {
+            logger.info('Пользователь автоматически верифицирован при присоединении', {
                 guildId: guild.id,
                 userId: member.id,
                 userTag: member.user.tag,
@@ -186,7 +186,7 @@ async function handleVerification(member, guild, verificationConfig, client) {
                 criteria: result.criteria
             });
         } else {
-            logger.debug('User not auto-verified on join', {
+            logger.debug('Пользователь не был автоматически верифицирован при присоединении', {
                 guildId: guild.id,
                 userId: member.id,
                 reason: result.reason
@@ -194,7 +194,7 @@ async function handleVerification(member, guild, verificationConfig, client) {
         }
 
     } catch (error) {
-        logger.error('Error in auto-verification for member', {
+        logger.error('Ошибка при автоматической верификации участника', {
             guildId: guild.id,
             userId: member.id,
             userTag: member.user.tag,
@@ -207,9 +207,6 @@ async function assignRoleSafely(member, role) {
     try {
         await member.roles.add(role);
     } catch (error) {
-        logger.warn(`Failed to assign role ${role.id} to member ${member.id}:`, error);
+        logger.warn(`Не удалось выдать роль ${role.id} участнику ${member.id}:`, error);
     }
 }
-
-
-
