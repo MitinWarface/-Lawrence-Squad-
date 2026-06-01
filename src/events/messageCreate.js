@@ -1,8 +1,3 @@
-
-
-
-
-
 import { Events } from 'discord.js';
 import { logger } from '../utils/logger.js';
 import { getLevelingConfig, getUserLevelData } from '../services/leveling.js';
@@ -21,17 +16,10 @@ export default {
 
       await handleLeveling(message, client);
     } catch (error) {
-      logger.error('Error in messageCreate event:', error);
+      logger.error('Ошибка в событии messageCreate:', error);
     }
   }
 };
-
-
-
-
-
-
-
 
 async function handleLeveling(message, client) {
   try {
@@ -106,12 +94,10 @@ async function handleLeveling(message, client) {
     
     if (result.success && result.leveledUp) {
       logger.info(
-        `${message.author.tag} leveled up to level ${result.level} in ${message.guild.name}`
+        `${message.author.tag} повысил уровень до ${result.level} на сервере ${message.guild.name}`
       );
     }
   } catch (error) {
-    logger.error('Error handling leveling for message:', error);
+    logger.error('Ошибка при начислении опыта за сообщение:', error);
   }
 }
-
-
