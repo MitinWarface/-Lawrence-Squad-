@@ -18,13 +18,13 @@ export default {
         guildId: role.guild.id,
         eventType: EVENT_TYPES.ROLE_CREATE,
         data: {
-          description: `A new role was created: ${role.toString()}`,
+          description: `Создана новая роль: ${role.toString()}`,
           fields
         }
       });
 
     } catch (error) {
-      logger.error('Error in roleCreate event:', error);
+      logger.error('Ошибка в событии roleCreate:', error);
     }
   }
 };
