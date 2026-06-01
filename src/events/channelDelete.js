@@ -11,7 +11,7 @@ import { logger } from '../utils/logger.js';
 export default {
     name: 'channelDelete',
     async execute(channel, client) {
-        // Handle ticket text channel deletion
+        // Обработка удаления текстового канала тикета
         if (channel.type === 0 && channel.guild) {
             try {
                 const ticketData = await getTicketData(channel.guild.id, channel.id);
@@ -19,34 +19,34 @@ export default {
                     ticketData.status = 'deleted';
                     ticketData.closedAt = new Date().toISOString();
                     await saveTicketData(channel.guild.id, channel.id, ticketData);
-                    logger.info(`Ticket channel ${channel.id} was manually deleted in guild ${channel.guild.id}, marked as deleted`);
+                    logger.info(`Канал тикета ${channel.id} был удален вручную на сервере ${channel.guild.id}, отмечен как удаленный`);
                 }
             } catch (err) {
-                logger.warn(`Could not clean up ticket record for deleted channel ${channel.id}:`, err);
+                logger.warn(`Не удалось очистить запись тикета для удаленного канала ${channel.id}:`, err);
             }
         }
 
-if (channel.type !== 2 && channel.type !== 4) {
+        if (channel.type !== 2 && channel.type !== 4) {
             return;
         }
 
         const guildId = channel.guild.id;
 
         try {
-            // Check if this channel is a counter channel
+            // Проверка, является ли этот канал каналом-счетчиком
             const counters = await getServerCounters(client, guildId);
             const orphanedCounter = counters.find(c => c.channelId === channel.id);
             
             if (orphanedCounter) {
-                logger.info(`Counter channel ${channel.name} (${channel.id}) was deleted, removing counter ${orphanedCounter.id} from database`);
+                logger.info(`Канал-счетчик ${channel.name} (${channel.id}) был удален, удаление счетчика ${orphanedCounter.id} из базы данных`);
                 
                 const updatedCounters = counters.filter(c => c.channelId !== channel.id);
                 const success = await saveServerCounters(client, guildId, updatedCounters);
                 
                 if (success) {
-                    logger.info(`Successfully removed orphaned counter ${orphanedCounter.id} (type: ${orphanedCounter.type}) from guild ${guildId}`);
+                    logger.info(`Успешно удален осиротевший счетчик ${orphanedCounter.id} (тип: ${orphanedCounter.type}) с сервера ${guildId}`);
                 } else {
-                    logger.warn(`Failed to remove orphaned counter ${orphanedCounter.id} from guild ${guildId}`);
+                    logger.warn(`Не удалось удалить осиротевший счетчик ${orphanedCounter.id} с сервера ${guildId}`);
                 }
             }
 
@@ -57,45 +57,43 @@ if (channel.type !== 2 && channel.type !== 4) {
             }
 
             if (config.triggerChannels.includes(channel.id)) {
-                logger.info(`Join to Create trigger channel ${channel.name} (${channel.id}) was deleted, removing from configuration`);
+                logger.info(`Триггер-канал "Join to Create" ${channel.name} (${channel.id}) был удален, удаление из конфигурации`);
                 
                 const success = await removeJoinToCreateTrigger(client, guildId, channel.id);
                 if (success) {
-                    logger.info(`Successfully removed trigger channel ${channel.id} from Join to Create configuration`);
+                    logger.info(`Успешно удален триггер-канал ${channel.id} из конфигурации "Join to Create"`);
                 } else {
-                    logger.warn(`Failed to remove trigger channel ${channel.id} from Join to Create configuration`);
+                    logger.warn(`Не удалось удалить триггер-канал ${channel.id} из конфигурации "Join to Create"`);
                 }
             }
 
             if (config.temporaryChannels[channel.id]) {
-                logger.info(`Join to Create temporary channel ${channel.name} (${channel.id}) was deleted, cleaning up database`);
+                logger.info(`Временный канал "Join to Create" ${channel.name} (${channel.id}) был удален, очистка базы данных`);
                 
                 const success = await unregisterTemporaryChannel(client, guildId, channel.id);
                 if (success) {
-                    logger.info(`Successfully cleaned up temporary channel ${channel.id} from database`);
+                    logger.info(`Успешно очищен временный канал ${channel.id} из базы данных`);
                 } else {
-                    logger.warn(`Failed to cleanup temporary channel ${channel.id} from database`);
+                    logger.warn(`Не удалось очистить временный канал ${channel.id} из базы данных`);
                 }
             }
 
             if (config.categoryId === channel.id) {
-                logger.warn(`Category ${channel.name} (${channel.id}) used for Join to Create temporary channels was deleted. Join to Create will be disabled.`);
+                logger.warn(`Категория ${channel.name} (${channel.id}), используемая для временных каналов "Join to Create", была удалена. Функция "Join to Create" будет отключена.`);
                 
                 config.categoryId = null;
                 config.enabled = false;
                 
                 try {
                     await client.db.set(`guild:${guildId}:jointocreate`, config);
-                    logger.info(`Disabled Join to Create for guild ${guildId} due to category deletion`);
+                    logger.info(`Функция "Join to Create" отключена для сервера ${guildId} из-за удаления категории`);
                 } catch (error) {
-                    logger.error(`Failed to disable Join to Create for guild ${guildId}:`, error);
+                    logger.error(`Не удалось отключить "Join to Create" для сервера ${guildId}:`, error);
                 }
             }
 
         } catch (error) {
-            logger.error(`Error in channelDelete event for guild ${guildId}:`, error);
+            logger.error(`Ошибка в событии channelDelete для сервера ${guildId}:`, error);
         }
     }
 };
-
-
