@@ -11,18 +11,16 @@ export default {
     try {
       client.user.setPresence(config.bot.presence);
 
-      startupLog(`Ready! Logged in as ${client.user.tag}`);
-      startupLog(`Serving ${client.guilds.cache.size} guild(s)`);
-      startupLog(`Loaded ${client.commands.size} commands`);
+      startupLog(`Готово! Выполнен вход как ${client.user.tag}`);
+      startupLog(`Обслуживается серверов: ${client.guilds.cache.size}`);
+      startupLog(`Загружено команд: ${client.commands.size}`);
 
       const reconciliationSummary = await reconcileReactionRoleMessages(client);
       startupLog(
-        `Reaction role reconciliation: scanned ${reconciliationSummary.scannedMessages}, removed ${reconciliationSummary.removedMessages}, errors ${reconciliationSummary.errors}`
+        `Сверка ролей по реакциям: просканировано ${reconciliationSummary.scannedMessages}, удалено ${reconciliationSummary.removedMessages}, ошибок ${reconciliationSummary.errors}`
       );
     } catch (error) {
-      logger.error("Error in ready event:", error);
+      logger.error("Ошибка в событии ready:", error);
     }
   },
 };
-
-
