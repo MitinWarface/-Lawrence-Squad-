@@ -1,17 +1,12 @@
-
-
-
-
-
 export const shopItems = [
     {
         id: 'extra_work',
-        name: 'Extra Work Shift',
+        name: 'Дополнительная рабочая смена',
         price: 5000,
-        description: 'Allows 1 extra use of the `/work` command.',
+        description: 'Позволяет использовать команду `/work` еще 1 раз.',
         type: 'consumable',
         maxQuantity: 5,
-cooldown: 86400000,
+        cooldown: 86400000,
         effect: {
             type: 'command_boost',
             command: 'work',
@@ -20,9 +15,9 @@ cooldown: 86400000,
     },
     {
         id: 'bank_upgrade_1',
-        name: 'Bank Upgrade I',
+        name: 'Улучшение банка I',
         price: 15000,
-        description: 'Increases bank capacity and allows more funds to be deposited.',
+        description: 'Увеличивает вместимость банка и позволяет хранить больше средств.',
         type: 'upgrade',
         maxLevel: 5,
         effect: {
@@ -32,9 +27,9 @@ cooldown: 86400000,
     },
     {
         id: 'diamond_pickaxe',
-        name: 'Diamond Pickaxe',
+        name: 'Алмазная кирка',
         price: 50000,
-        description: 'Increases yield from `/mine`',
+        description: 'Увеличивает добычу от команды `/mine`.',
         type: 'tool',
         durability: 100,
         effect: {
@@ -44,11 +39,11 @@ cooldown: 86400000,
     },
     {
         id: 'premium_role',
-        name: 'Premium Server Role',
+        name: 'Премиум-роль на сервере',
         price: 15000,
-        description: 'A special role granting a fancy color and a 10% daily bonus.',
+        description: 'Особая роль, дающая красивый цвет и ежедневный бонус 10%.',
         type: 'role',
-roleId: null,
+        roleId: null,
         effect: {
             type: 'daily_bonus',
             multiplier: 1.1
@@ -56,9 +51,9 @@ roleId: null,
     },
     {
         id: 'lucky_clover',
-        name: 'Lucky Clover',
+        name: 'Клевер удачи',
         price: 10000,
-        description: 'Increases the chance of winning a higher payout on `/gamble` once.',
+        description: 'Единожды увеличивает шанс на более крупный выигрыш в `/gamble`.',
         type: 'consumable',
         maxQuantity: 10,
         effect: {
@@ -69,9 +64,9 @@ roleId: null,
     },
     {
         id: 'fishing_rod',
-        name: '🎣 Fishing Rod',
+        name: '🎣 Удочка',
         price: 5000,
-        description: 'Used for fishing commands',
+        description: 'Используется для команд рыбалки.',
         type: 'tool',
         durability: 100,
         effect: {
@@ -81,9 +76,9 @@ roleId: null,
     },
     {
         id: 'pickaxe',
-        name: '⛏️ Pickaxe',
+        name: '⛏️ Кирка',
         price: 7500,
-        description: 'Used for mining commands',
+        description: 'Используется для команд добычи ресурсов.',
         type: 'tool',
         durability: 100,
         effect: {
@@ -93,9 +88,9 @@ roleId: null,
     },
     {
         id: 'laptop',
-        name: '💻 Laptop',
+        name: '💻 Ноутбук',
         price: 15000,
-        description: 'Increases work earnings',
+        description: 'Увеличивает заработок от работы.',
         type: 'tool',
         durability: 200,
         effect: {
@@ -105,9 +100,9 @@ roleId: null,
     },
     {
         id: 'lucky_charm',
-        name: '🍀 Lucky Charm',
+        name: '🍀 Талисман удачи',
         price: 10000,
-        description: 'Increases luck for gambling. Has 3 uses before being consumed.',
+        description: 'Увеличивает удачу в азартных играх. Хватает на 3 использования до исчезновения.',
         type: 'consumable',
         maxQuantity: 10,
         effect: {
@@ -118,9 +113,9 @@ roleId: null,
     },
     {
         id: 'bank_note',
-        name: '📜 Bank Note',
+        name: '📜 Банкнота',
         price: 25000,
-        description: 'Increases bank capacity by 10,000. Can be purchased multiple times.',
+        description: 'Увеличивает вместимость банка на 10 000. Можно покупать несколько раз.',
         type: 'tool',
         durability: null,
         effect: {
@@ -130,9 +125,9 @@ roleId: null,
     },
     {
         id: 'personal_safe',
-        name: '🔒 Personal Safe',
+        name: '🔒 Личный сейф',
         price: 30000,
-        description: 'Protects your money from theft. Prevents others from robbing you.',
+        description: 'Защищает ваши деньги от кражи. Не дает другим вас ограбить.',
         type: 'tool',
         durability: null,
         effect: {
@@ -142,47 +137,25 @@ roleId: null,
     }
 ];
 
-
-
-
-
-
 export function getItemById(itemId) {
     return shopItems.find(item => item.id === itemId);
 }
 
-
-
-
-
-
 export function getItemsByType(type) {
     return shopItems.filter(item => item.type === type);
 }
-
-
-
-
-
 
 export function getItemPrice(itemId) {
     const item = getItemById(itemId);
     return item ? item.price : 0;
 }
 
-
-
-
-
-
-
 export function validatePurchase(itemId, userData) {
     const item = getItemById(itemId);
     if (!item) {
-        return { valid: false, reason: 'Item not found' };
+        return { valid: false, reason: 'Предмет не найден' };
     }
 
-    
     const inventory = userData.inventory || {};
     const upgrades = userData.upgrades || {};
 
@@ -191,28 +164,26 @@ export function validatePurchase(itemId, userData) {
         if (currentQuantity >= item.maxQuantity) {
             return { 
                 valid: false, 
-                reason: `You can only have a maximum of ${item.maxQuantity} ${item.name}s` 
+                reason: `У вас может быть не более ${item.maxQuantity} шт. предмета "${item.name}"` 
             };
         }
     }
 
     if (item.type === 'upgrade' && item.maxLevel) {
-        
         if (upgrades[itemId]) {
             return { 
                 valid: false, 
-                reason: `You've already purchased ${item.name}` 
+                reason: `Вы уже купили "${item.name}"` 
             };
         }
     }
 
     if (item.type === 'tool') {
-        
         const currentQuantity = inventory[itemId] || 0;
         if (itemId !== 'bank_note' && currentQuantity > 0) {
             return { 
                 valid: false, 
-                reason: `You already have a ${item.name}` 
+                reason: `У вас уже есть "${item.name}"` 
             };
         }
     }
@@ -221,14 +192,10 @@ export function validatePurchase(itemId, userData) {
         if (userData.roles?.includes(item.roleId)) {
             return { 
                 valid: false, 
-                reason: `You already have the ${item.name} role` 
+                reason: `У вас уже есть роль "${item.name}"` 
             };
         }
     }
 
     return { valid: true };
 }
-
-
-
-
