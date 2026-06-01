@@ -1,30 +1,13 @@
-﻿import { EmbedBuilder, ChannelType } from 'discord.js';
+import { EmbedBuilder, ChannelType } from 'discord.js';
 import { getGuildConfig } from '../services/guildConfig.js';
 import { EVENT_TYPES } from '../services/loggingService.js';
 import { logger } from './logger.js';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export async function logTicketEvent({ client, guildId, event }) {
   try {
     const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId).catch(() => null);
     if (!guild) {
-      logger.warn(`logTicketEvent invoked without valid guild: ${guildId}`);
+      logger.warn(`logTicketEvent вызван без указания действительного сервера: ${guildId}`);
       return;
     }
 
@@ -37,13 +20,13 @@ export async function logTicketEvent({ client, guildId, event }) {
 
     const channel = guild.channels.cache.get(logChannelId) || await guild.channels.fetch(logChannelId).catch(() => null);
     if (!channel) {
-      logger.warn(`Ticket log channel not found: ${logChannelId} for event type: ${event.type}`);
+      logger.warn(`Канал для логов тикетов не найден: ${logChannelId} (тип события: ${event.type})`);
       return;
     }
 
     const permissions = channel.permissionsFor(guild.members.me);
     if (!permissions.has(['SendMessages', 'EmbedLinks'])) {
-      logger.warn(`Missing permissions in ticket log channel: ${logChannelId}`);
+      logger.warn(`Недостаточно прав в канале для логов тикетов: ${logChannelId}`);
       return;
     }
 
@@ -56,18 +39,12 @@ export async function logTicketEvent({ client, guildId, event }) {
     }
 
     await channel.send(messageOptions);
-    logger.info(`Ticket event logged: ${event.type} in guild ${guildId}`);
+    logger.info(`Событие тикета записано: ${event.type} на сервере ${guildId}`);
 
   } catch (error) {
-    logger.error('Error logging ticket event:', error);
+    logger.error('Ошибка при логировании события тикета:', error);
   }
 }
-
-
-
-
-
-
 
 function getLogChannelForEventType(config, eventType) {
   switch (eventType) {
@@ -107,23 +84,17 @@ function mapTicketEventType(eventType) {
   }
 }
 
-
-
-
-
-
-
 async function createTicketLogEmbed(guild, event) {
   const embed = new EmbedBuilder();
   
   const eventColors = {
-open: 0x2ecc71,
-close: 0xe74c3c,
-delete: 0x8b0000,
-claim: 0x3498db,
-unclaim: 0xf39c12,
-priority: 0x9b59b6,
-transcript: 0x1abc9c
+    open: 0x2ecc71,
+    close: 0xe74c3c,
+    delete: 0x8b0000,
+    claim: 0x3498db,
+    unclaim: 0xf39c12,
+    priority: 0x9b59b6,
+    transcript: 0x1abc9c
   };
   
   embed.setColor(eventColors[event.type] || 0x95a5a6);
@@ -136,7 +107,7 @@ transcript: 0x1abc9c
   
   if (event.ticketId || event.ticketNumber) {
     embed.setFooter({ 
-      text: `Ticket ID: ${event.ticketNumber || event.ticketId || 'Unknown'}` 
+      text: `ID Тикета: ${event.ticketNumber || event.ticketId || 'Неизвестно'}` 
     });
   }
   
@@ -147,14 +118,14 @@ transcript: 0x1abc9c
       const user = await guild.client.users.fetch(event.userId).catch(() => null);
       if (user) {
         fields.push({
-          name: '👤 Ticket User',
+          name: '👤 Пользователь',
           value: `${user.tag} (${event.userId})`,
           inline: true
         });
       }
     } catch (error) {
       fields.push({
-        name: '👤 Ticket User',
+        name: '👤 Пользователь',
         value: `<@${event.userId}> (${event.userId})`,
         inline: true
       });
@@ -166,14 +137,14 @@ transcript: 0x1abc9c
       const executor = await guild.client.users.fetch(event.executorId).catch(() => null);
       if (executor) {
         fields.push({
-          name: '🔨 Executed By',
+          name: '🔨 Исполнитель',
           value: `${executor.tag} (${event.executorId})`,
           inline: true
         });
       }
     } catch (error) {
       fields.push({
-        name: '🔨 Executed By',
+        name: '🔨 Исполнитель',
         value: `<@${event.executorId}> (${event.executorId})`,
         inline: true
       });
@@ -182,7 +153,7 @@ transcript: 0x1abc9c
   
   if (event.reason) {
     fields.push({
-      name: '📝 Reason',
+      name: '📝 Причина',
       value: event.reason,
       inline: false
     });
@@ -196,10 +167,18 @@ transcript: 0x1abc9c
       high: '🟡',
       urgent: '🔴'
     };
+
+    const priorityNames = {
+      none: 'Отсутствует',
+      low: 'Низкий',
+      medium: 'Средний',
+      high: 'Высокий',
+      urgent: 'Срочный'
+    };
     
     fields.push({
-      name: '🎯 Priority',
-      value: `${priorityEmojis[event.priority] || '⚪'} ${event.priority.charAt(0).toUpperCase() + event.priority.slice(1)}`,
+      name: '🎯 Приоритет',
+      value: `${priorityEmojis[event.priority] || '⚪'} ${priorityNames[event.priority] || event.priority}`,
       inline: true
     });
   }
@@ -221,94 +200,5 @@ transcript: 0x1abc9c
   return embed;
 }
 
-
-
-
-
-
 function getEventDisplayInfo(event) {
-  const ticketRef = event.ticketNumber ? `#${event.ticketNumber}` : event.ticketId ? `<#${event.ticketId}>` : 'Unknown';
-  
-  const eventMessages = {
-    open: {
-      title: '🎫 Ticket Opened',
-      description: `A new ticket has been created: ${ticketRef}`
-    },
-    close: {
-      title: '🔒 Ticket Closed',
-      description: `Ticket ${ticketRef} has been closed`
-    },
-    delete: {
-      title: '🗑️ Ticket Deleted',
-      description: `Ticket ${ticketRef} has been permanently deleted`
-    },
-    claim: {
-      title: '🙋 Ticket Claimed',
-      description: `Ticket ${ticketRef} has been claimed`
-    },
-    unclaim: {
-      title: '🔓 Ticket Unclaimed',
-      description: `Ticket ${ticketRef} has been unclaimed`
-    },
-    priority: {
-      title: '🎯 Priority Updated',
-      description: `Priority changed for ticket ${ticketRef}`
-    },
-    transcript: {
-      title: '📜 Transcript Created',
-      description: `Transcript generated for ticket ${ticketRef}`
-    }
-  };
-  
-  return eventMessages[event.type] || {
-    title: '🎫 Ticket Event',
-    description: `An event occurred for ticket ${ticketRef}`
-  };
-}
-
-
-
-
-
-
-
-export async function getTicketLoggingConfig(client, guildId) {
-  const config = await getGuildConfig(client, guildId);
-  return {
-    enabled: !!(config.ticketLogsChannelId || config.ticketTranscriptChannelId),
-    lifecycleChannelId: config.ticketLogsChannelId || null,
-    transcriptChannelId: config.ticketTranscriptChannelId || null,
-  };
-}
-
-
-
-
-
-
-
-export function validateLogChannel(channel, botMember) {
-  if (!channel || channel.type !== ChannelType.GuildText) {
-    return {
-      valid: false,
-      error: 'Channel must be a text channel.'
-    };
-  }
-  
-  const permissions = channel.permissionsFor(botMember);
-  const requiredPermissions = ['SendMessages', 'EmbedLinks'];
-  
-  const missing = requiredPermissions.filter(perm => !permissions.has(perm));
-  
-  if (missing.length > 0) {
-    return {
-      valid: false,
-      error: `Missing permissions: ${missing.join(', ')}`
-    };
-  }
-  
-  return { valid: true };
-}
-
-
-
+  const ticketRef = event.ticketNumber ? `#${event.ticketNumber}` : event.ticketId ? `<#${event.ticketId}>` : 'Неизвест
