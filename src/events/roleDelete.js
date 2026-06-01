@@ -18,13 +18,13 @@ export default {
         guildId: role.guild.id,
         eventType: EVENT_TYPES.ROLE_DELETE,
         data: {
-          description: `A role was deleted: ${role.name}`,
+          description: `Роль была удалена: ${role.name}`,
           fields
         }
       });
 
     } catch (error) {
-      logger.error('Error in roleDelete event:', error);
+      logger.error('Ошибка в событии roleDelete:', error);
     }
   }
 };
