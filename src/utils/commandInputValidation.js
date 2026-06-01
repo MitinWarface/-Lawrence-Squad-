@@ -36,7 +36,7 @@ export function validateChatInputPayloadOrThrow(interaction, context = {}) {
   throw createError(
     'Invalid command input payload',
     ErrorTypes.VALIDATION,
-    'One or more command inputs are invalid. Please review your options and try again.',
+    'Одна или несколько введенных команд неверны. Пожалуйста, проверьте свои параметры и повторите попытку.',
     {
       ...context,
       errorCode: 'VALIDATION_FAILED',
