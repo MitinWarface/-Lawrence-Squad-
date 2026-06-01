@@ -31,17 +31,17 @@ export default {
 
                 const formatData = { user, guild, member };
                 const goodbyeMessage = formatWelcomeMessage(
-                    welcomeConfig.leaveMessage || welcomeConfig.leaveEmbed?.description || '{user.tag} has left the server.',
+                    welcomeConfig.leaveMessage || welcomeConfig.leaveEmbed?.description || '{user.tag} покинул сервер.',
                     formatData
                 );
 
                 const embedTitle = formatWelcomeMessage(
-                    welcomeConfig.leaveEmbed?.title || '👋 Goodbye',
+                    welcomeConfig.leaveEmbed?.title || '👋 До свидания',
                     formatData
                 );
                 const embedFooter = welcomeConfig.leaveEmbed?.footer
                     ? formatWelcomeMessage(welcomeConfig.leaveEmbed.footer, formatData)
-                    : `Goodbye from ${guild.name}!`;
+                    : `Прощание от сервера ${guild.name}!`;
 
                 const canEmbed = permissions.has(PermissionFlagsBits.EmbedLinks);
 
@@ -57,8 +57,8 @@ export default {
                         .setColor(welcomeConfig.leaveEmbed?.color || getColor('error'))
                         .setThumbnail(user.displayAvatarURL())
                         .addFields(
-                            { name: 'User', value: `${user.tag} (${user.id})`, inline: true },
-                            { name: 'Member Count', value: guild.memberCount.toString(), inline: true }
+                            { name: 'Пользователь', value: `${user.tag} (${user.id})`, inline: true },
+                            { name: 'Участников', value: guild.memberCount.toString(), inline: true }
                         )
                         .setTimestamp()
                         .setFooter({ text: embedFooter });
@@ -85,21 +85,21 @@ export default {
                 guildId: guild.id,
                 eventType: EVENT_TYPES.MEMBER_LEAVE,
                 data: {
-                    description: `${user.tag} left the server`,
+                    description: `${user.tag} покинул сервер`,
                     userId: user.id,
                     fields: [
                         {
-                            name: '👤 Member',
+                            name: '👤 Участник',
                             value: `${user.tag} (${user.id})`,
                             inline: true
                         },
                         {
-                            name: '👥 Member Count',
+                            name: '👥 Участников на сервере',
                             value: guild.memberCount.toString(),
                             inline: true
                         },
                         {
-                            name: '📅 Joined',
+                            name: '📅 Присоединился',
                             value: `<t:${Math.floor((member.joinedTimestamp || 0) / 1000)}:R>`,
                             inline: true
                         }
@@ -107,7 +107,7 @@ export default {
                 }
             });
         } catch (error) {
-            logger.debug('Error logging member leave:', error);
+            logger.debug('Ошибка при записи в лог выхода участника:', error);
         }
         
         
@@ -119,10 +119,10 @@ export default {
                 }
             }
         } catch (error) {
-            logger.debug('Error updating counters on member leave:', error);
+            logger.debug('Ошибка при обновлении счетчиков при выходе участника:', error);
         }
         
-        // Backup and remove birthday data when a member leaves
+        // Создание резервной копии и удаление данных о дне рождения при выходе участника
         try {
             const birthdays = await getGuildBirthdays(member.client, guild.id);
             if (birthdays[user.id]) {
@@ -131,38 +131,35 @@ export default {
                 backup[user.id] = birthdays[user.id];
                 await member.client.db.set(backupKey, backup);
                 await deleteBirthday(member.client, guild.id, user.id);
-                logger.debug(`Birthday backed up and removed for user ${user.id} in guild ${guild.id}`);
+                logger.debug(`День рождения сохранен в резервную копию и удален для пользователя ${user.id} на сервере ${guild.id}`);
             }
         } catch (error) {
-            logger.debug('Error handling birthday on member leave:', error);
+            logger.debug('Ошибка при обработке дня рождения при выходе участника:', error);
         }
         
-        // Remove all pending applications when a member leaves
+        // Удаление всех ожидающих заявок при выходе участника
         try {
             const userApplications = await getUserApplications(member.client, guild.id, user.id);
             if (userApplications && userApplications.length > 0) {
                 for (const app of userApplications) {
                     await deleteApplication(member.client, guild.id, app.id, user.id);
                 }
-                logger.debug(`Removed ${userApplications.length} applications for user ${user.id} in guild ${guild.id}`);
+                logger.debug(`Удалено заявок: ${userApplications.length} для пользователя ${user.id} на сервере ${guild.id}`);
             }
         } catch (error) {
-            logger.debug('Error handling applications on member leave:', error);
+            logger.debug('Ошибка при обработке заявок при выходе участника:', error);
         }
 
-        // Remove leveling data when a member leaves
+        // Удаление данных об уровне при выходе участника
         try {
             await deleteUserLevelData(member.client, guild.id, user.id);
-            logger.debug(`Removed leveling data for user ${user.id} in guild ${guild.id}`);
+            logger.debug(`Удалены данные об уровне для пользователя ${user.id} на сервере ${guild.id}`);
         } catch (error) {
-            logger.debug('Error handling leveling data on member leave:', error);
+            logger.debug('Ошибка при обработке данных об уровне при выходе участника:', error);
         }
         
     } catch (error) {
-        logger.error('Error in guildMemberRemove event:', error);
+        logger.error('Ошибка в событии guildMemberRemove:', error);
     }
   }
 };
-
-
-
