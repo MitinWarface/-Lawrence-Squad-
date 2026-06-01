@@ -11,7 +11,7 @@ export default {
         const githubButton = new ButtonBuilder()
             .setLabel('?? Нашли баг или ошибку?')
             .setStyle(ButtonStyle.Link)
-            // .setURL('https://github.com/codebymitch/TitanBot/issues');
+            .setURL('Discord : melory77');
 
         const row = new ActionRowBuilder().addComponents(githubButton);
 
