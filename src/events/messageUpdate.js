@@ -20,7 +20,7 @@ export default {
       
       if (newMessage.author) {
         fields.push({
-          name: '👤 Author',
+          name: '👤 Автор',
           value: `${newMessage.author.tag} (${newMessage.author.id})`,
           inline: true
         });
@@ -28,36 +28,36 @@ export default {
 
       
       fields.push({
-        name: '💬 Channel',
+        name: '💬 Канал',
         value: `${newMessage.channel.toString()} (${newMessage.channel.id})`,
         inline: true
       });
 
       
-      const oldContent = oldMessage.content || '*(empty message)*';
+      const oldContent = oldMessage.content || '*(пустое сообщение)*';
       const oldContentTruncated = oldContent.length > MAX_LOGGED_EDIT_CONTENT_LENGTH 
         ? oldContent.substring(0, MAX_LOGGED_EDIT_CONTENT_LENGTH - 3) + '...' 
         : oldContent;
       fields.push({
-        name: '📝 Old Content',
+        name: '📝 Старое содержание',
         value: oldContentTruncated,
         inline: false
       });
 
       
-      const newContent = newMessage.content || '*(empty message)*';
+      const newContent = newMessage.content || '*(пустое сообщение)*';
       const newContentTruncated = newContent.length > MAX_LOGGED_EDIT_CONTENT_LENGTH 
         ? newContent.substring(0, MAX_LOGGED_EDIT_CONTENT_LENGTH - 3) + '...' 
         : newContent;
       fields.push({
-        name: '📝 New Content',
+        name: '📝 Новое содержание',
         value: newContentTruncated,
         inline: false
       });
 
       
       fields.push({
-        name: '🆔 Message ID',
+        name: '🆔 ID сообщения',
         value: newMessage.id,
         inline: true
       });
@@ -67,7 +67,7 @@ export default {
         guildId: newMessage.guild.id,
         eventType: EVENT_TYPES.MESSAGE_EDIT,
         data: {
-          description: `A message was edited in ${newMessage.channel.toString()}`,
+          description: `Сообщение было изменено в ${newMessage.channel.toString()}`,
           userId: newMessage.author?.id,
           channelId: newMessage.channel.id,
           fields
@@ -75,7 +75,7 @@ export default {
       });
 
     } catch (error) {
-      logger.error('Error in messageUpdate event:', error);
+      logger.error('Ошибка в событии messageUpdate:', error);
     }
   }
 };
